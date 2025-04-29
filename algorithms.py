@@ -377,3 +377,4 @@ if __name__ == "__main__":
 # Visual representation of citation networks.
 # Sorted document lists based on selected criteria.
 # CSUF Document Scanner & Pattern Extractor
+
