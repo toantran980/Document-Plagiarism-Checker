@@ -1,7 +1,16 @@
-#String Matching: Use Rabin-Karp and KMP algorithms to detect duplicate phrases
-# or plagiarized content. Refer to rabin karp.py and kmp algorithm.py.
+import time
 
-# Use Rabin-Karp and KMP algorithms to detect duplicate phrases or plagiarized content.
+# Decorator to log execution and measure runtime
+def log_execution(func):
+    def wrapper(*args, **kwargs):
+        print(f"Starting '{func.__name__}'...")
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Finished '{func.__name__}' in {end_time - start_time:.6f} seconds.")
+        return result
+    return wrapper
+
 # KMP algorithm
 def compute_lps(pattern):
     m = len(pattern)
@@ -20,9 +29,6 @@ def compute_lps(pattern):
                 lps[i] = 0
                 i += 1
     return lps
-
-# modified the algorithm so instead of reading kmp from input, it reads from a file
-
 
 # Main KMP function to search pattern in text
 def kmp_search(text, pattern):
@@ -44,16 +50,8 @@ def kmp_search(text, pattern):
                 i += 1
     return positions
 
-# Example input
-#text = "Hello World, this is Computer Science !!!"
-#pattern = "Computer"
-
-# Output
-#print("KMP Pattern found at:", kmp_search(text, pattern))
-
 #Rabin Karp String Matching
 #Application: Dectecting duplicate phreases in documents
-
 def rabin_karp(text, pattern, q = 101):
     d = 256
     m = len(pattern)
@@ -84,86 +82,55 @@ def rabin_karp(text, pattern, q = 101):
 
     return positions
 
+# Helper function to check if a word matches using Rabin-Karp or KMP
+def is_match(word1, word2):
+    # Ensure word1 is longer or equal in length to word2
+    if len(word1) >= len(word2):
+        # Use KMP
+        if kmp_search(word1, word2):
+            return True
+        # Use Rabin-Karp
+        if rabin_karp(word1, word2):
+            return True
+    return False
 
-# Example input
-#text = "Hello World, this is Computer Science !!!"
-#pattern = "Computer"
-
-# Output
-#print("Rabin Karp Pattern found at:", rabin_karp(text, pattern))
-
-
-# even if this positions are not check for plagiarized content, so positions does not matter
-# modify kabin karp to check for plagiarized content
-
-# check for matching phrases in two files
-
+# Function to extract plagiarized words from two texts
 def check_matching_phrases(file1, file2):
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
-        text1 = f1.read()
-        text2 = f2.read()
+        text1 = f1.read().lower().strip()
+        text2 = f2.read().lower().strip()
 
-    kmp_positions = kmp_search(text1, text2)
-    rk_positions = rabin_karp(text1, text2)
+    # Split texts into words
+    words1 = text1.split()
+    words2 = text2.split()
 
-    return kmp_positions, rk_positions
+    matching_phrases = set()
 
+    # Compare each word in words1 with words2 using the helper function
+    for word1 in words1:
+        for word2 in words2:
+            if is_match(word1, word2):
+                matching_phrases.add(word2)
 
-def extract_plagiarized_words(text1, text2):
-    # Normalize text (convert to lowercase and strip whitespace)
-    text1 = text1.strip().lower()
-    text2 = text2.strip().lower()
+    return matching_phrases
 
-    # Split texts into sentences or phrases
-    phrases1 = text1.split('.')
-    phrases2 = text2.split('.')
-
-    plagiarized_words = set()
-
-    # Check each phrase in text1 against text2 using Rabin-Karp and KMP
-    for phrase1 in phrases1:
-        for phrase2 in phrases2:
-            # Ensure phrases are non-empty
-            phrase1 = phrase1.strip()
-            phrase2 = phrase2.strip()
-            if phrase1 and phrase2:
-                # Split phrases into words
-                words1 = phrase1.split()
-                words2 = phrase2.split()
-
-                # Compare each word in words1 with words2 using Rabin-Karp and KMP
-                for i in words1: 
-                    for j in words2:
-                        if len(i) >= len(j):
-                            # Use KMP
-                            if kmp_search(i, j):
-                                plagiarized_words.add(j)
-                            # Use Rabin-Karp
-                            elif rabin_karp(i, j):
-                                plagiarized_words.add(j)
-
-    return plagiarized_words
-
-# Main function to check plagiarism and print plagiarized words
+# Function to check for plagiarism between two files
+@log_execution # decorator to log execution and measure runtime
 def check_plagiarism(file1, file2):
-    with open(file1, 'r') as f1, open(file2, 'r') as f2:
-        text1 = f1.read()
-        text2 = f2.read()
-
-    # Detect plagiarized words using both algorithms
-    plagiarized_words = extract_plagiarized_words(text1, text2)
+    # Detect plagiarized words
+    plagiarized_words = check_matching_phrases(file1, file2)
 
     if plagiarized_words:
         print("Plagiarism detected!")
-        print("Plagiarized words:")
-        print(" ".join(plagiarized_words))
+        print("Plagiarized content:", " ".join(plagiarized_words))
     else:
         print("No plagiarism detected.")
 
-# Example usage
-check_plagiarism('file1.txt', 'file2.txt')
+    return plagiarized_words
 
-# File 1: Hello, this is pencil pen.
-# File 2: Hello, this is a pen.
-# Output: Plagiarism detected! 
-# Plagiarized words: pencil, pen.
+# Example input files
+file1 = 'file1.txt'  # Content: "Hello, this is pencil pen."
+file2 = 'file2.txt'  # Content: "Hello, this is a pen."
+
+# Detect plagiarized content
+check_plagiarism(file1, file2)
