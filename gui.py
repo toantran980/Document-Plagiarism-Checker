@@ -45,7 +45,24 @@ def gui():
             size.config(text=f"Total Size: {totalSize} Bytes")
 
     def remove_button():
-        pass
+        """ Remove the last added file from the list and update the UI """
+        if Files:
+            # Remove the last file from the list
+            removed_file = Files.pop()
+
+            # Update the scrolled text box to reflect the removal
+            box1.configure(state='normal')
+            box1.delete("1.0", tk.END)
+            for file in Files:
+                box1.insert(tk.END, file + "\n")
+            box1.configure(state='disabled')
+
+            # Update the total file size
+            global totalSize
+            totalSize -= os.path.getsize(removed_file)
+            size.config(text=f"Total Size: {totalSize} Bytes")
+        else:
+            print("No files to remove.")
 
     def scan_and_compress():
         pass
