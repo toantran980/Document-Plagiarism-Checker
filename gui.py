@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import scrolledtext
 import tkinter as tk
+import plagiarism_checker
 
 
 import os
@@ -28,6 +29,43 @@ def gui():
                 content = file.read()
                 text_widget.delete("1.0", tk.END)
                 text_widget.insert(tk.END, content)
+
+    def highlight_text(text_widget, phrase):
+        """ Highlights occurrences of a phrase in a text widget """
+        start_index = "1.0"
+        while True:
+            start_index = text_widget.search(phrase, start_index, stopindex=tk.END)
+            if not start_index:
+                break
+            end_index = f"{start_index}+{len(phrase)}c"
+            text_widget.tag_add("match", start_index, end_index)
+            text_widget.tag_config("match", background="yellow", foreground="black")
+            start_index = end_index
+
+    def find_and_highlight_matches():
+        """ Uses imported function to find matches and highlight them """
+        text1_content = entry1.get()
+        text2_content = entry2.get()
+
+        if not text1_content or not text2_content:
+            return
+
+        # Call the imported function from text_matcher.py
+        matches = plagiarism_checker.check_plagiarism(text1_content, text2_content)
+
+        # Highlight matches in both text boxes
+        text1.configure(state='normal')
+        text2.configure(state='normal')
+
+        text1.tag_remove("match", "1.0", tk.END)
+        text2.tag_remove("match", "1.0", tk.END)
+
+        for match in matches:
+            highlight_text(text1, match)
+            highlight_text(text2, match)
+
+        text1.configure(state='disabled')
+        text2.configure(state='disabled')
 
     def scan_and_compress():
         pass
@@ -68,6 +106,10 @@ def gui():
 
     text2 = tk.Text(root, height=10, width=60)
     text2.grid(row=3, column=0, columnspan=3)
+
+    # Button to find matches
+    match_button = tk.Button(root, text="Find Matches", font=("Consolas", 10), command=find_and_highlight_matches)
+    match_button.grid(row=4, column=1)
 
     # Run the application
     root.mainloop()

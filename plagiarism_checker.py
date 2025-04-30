@@ -1,4 +1,5 @@
 import time
+import os
 
 # Decorator to log execution and measure runtime
 def log_execution(func):
@@ -96,6 +97,12 @@ def is_match(word1, word2):
 
 # Function to extract plagiarized words from two texts
 def check_matching_phrases(file1, file2):
+    print(os.path.exists("file1.txt"))  # Returns True if file exists
+    print(os.path.exists("file2.txt"))  # Returns True if file exists
+    if not os.path.exists(file1) or not os.path.exists(file2):
+        print("Error: One or both files do not exist.")
+        return set()
+
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
         text1 = f1.read().lower().strip()
         text2 = f2.read().lower().strip()
