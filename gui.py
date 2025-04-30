@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import scrolledtext
+import tkinter as tk
+
 
 import os
 
@@ -17,7 +19,30 @@ def gui():
     decompressFilePath = None
 
     def add_button():
-        pass
+        """ Allow user to select a file and display its path and content """
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+    
+        if file_path:
+            # Add file path to the global list
+            Files.append(file_path)
+
+            # Enable the text box, insert file path, then disable it again
+            box1.configure(state='normal')
+            box1.insert(tk.END, file_path + "\n")
+            box1.configure(state='disabled')
+
+            # Read and display file contents in the second text box
+            with open(file_path, "r", encoding="utf-8") as file:
+                content = file.read()
+                box2.configure(state='normal')
+                box2.delete("1.0", tk.END)
+                box2.insert(tk.END, content)
+                box2.configure(state='disabled')
+
+            # Update total file size
+            global totalSize
+            totalSize += os.path.getsize(file_path)
+            size.config(text=f"Total Size: {totalSize} Bytes")
 
     def remove_button():
         pass
