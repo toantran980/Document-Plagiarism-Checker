@@ -86,14 +86,7 @@ def rabin_karp(text, pattern, q = 101):
 # Helper function to check if a word matches using Rabin-Karp or KMP
 def is_match(word1, word2):
     # Ensure word1 is longer or equal in length to word2
-    if len(word1) >= len(word2):
-        # Use KMP
-        if kmp_search(word1, word2):
-            return True
-        # Use Rabin-Karp
-        if rabin_karp(word1, word2):
-            return True
-    return False
+    return len(word1) >= len(word2) and (kmp_search(word1, word2) or rabin_karp(word1,word2))
 
 # Function to extract plagiarized words from two texts
 def check_matching_phrases(file1, file2):
@@ -104,8 +97,8 @@ def check_matching_phrases(file1, file2):
         return set()
 
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
-        text1 = f1.read().lower().strip()
-        text2 = f2.read().lower().strip()
+        text1 = f1.read().strip()
+        text2 = f2.read().strip()
 
     # Split texts into words
     words1 = text1.split()
@@ -136,8 +129,8 @@ def check_plagiarism(file1, file2):
     return plagiarized_words
 
 # Example input files
-file1 = 'file1.txt'  # Content: "Hello, this is pencil pen."
-file2 = 'file2.txt'  # Content: "Hello, this is a pen."
+#file1 = 'file1.txt'  # Content: "Hello, this is pencil pen."
+#file2 = 'file2.txt'  # Content: "Hello, this is a pen."
 
 # Detect plagiarized content
-check_plagiarism(file1, file2)
+#check_plagiarism(file1, file2)
