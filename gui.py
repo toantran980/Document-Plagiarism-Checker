@@ -4,7 +4,6 @@ from tkinter import scrolledtext
 import tkinter as tk
 import plagiarism_checker
 
-
 import os
 
 def gui():
@@ -114,4 +113,4 @@ def gui():
     # Run the application
     root.mainloop()
 
-gui()
+#gui()

@@ -2,7 +2,12 @@
 
 import tkinter as tk
 from tkinter import filedialog
-import gui
+from gui import gui
 
-gui #launches the gui from gui.py
+def main():
+    gui() #launches the gui from gui.py
+
+
+if __name__ == "__main__":
+    main()
 
