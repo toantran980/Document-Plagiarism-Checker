@@ -5,7 +5,8 @@ import tkinter as tk
 from datetime import datetime
 
 import plagiarism_checker
-from sorting_title import mergeSort 
+from sorting_title import mergeSort
+from naive import naive_search
 
 import os
 
@@ -79,6 +80,36 @@ def gui():
         text1.configure(state='disabled')
         text2.configure(state='disabled')
 
+    def find_and_highlight_terms():
+        text1_content = entry1.get()
+        text2_content = entry2.get()
+        term = entry3.get()
+        print(term)
+
+        if not text1_content or not text2_content:
+            return
+
+        #uses naive search to find terms across both documents
+        text1_matches = naive_search(text1_content, term)
+        text2_matches = naive_search(text2_content, term)
+
+        if text1_matches and text2_matches != []:
+            return
+        print(term)
+            
+        # Highlight matches in both text boxes
+        text1.configure(state='normal')
+        text2.configure(state='normal')
+
+        text1.tag_remove("match", "1.0", tk.END)
+        text2.tag_remove("match", "1.0", tk.END)
+
+        highlight_text(text1, term)
+        highlight_text(text2, term)
+
+        text1.configure(state='disabled')
+        text2.configure(state='disabled')
+
     def scan_and_compress():
         pass
 
@@ -130,6 +161,12 @@ def gui():
 
     text2 = tk.Text(root, height=10, width=60)
     text2.grid(row=3, column=0, columnspan=3)
+
+    # Box to enter search term
+    entry3 = tk.Entry(root, width = 50)
+    entry3.grid(row=4,column = 6)
+    search_button = tk.Button(root, text = "Search", font=("Consolas", 10), command=find_and_highlight_terms)
+    search_button.grid(row = 4, column = 5)
 
     # Button to find matches
     match_button = tk.Button(root, text="Find Matches", font=("Consolas", 10), command=find_and_highlight_matches)
