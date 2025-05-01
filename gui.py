@@ -2,7 +2,10 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import scrolledtext
 import tkinter as tk
+from datetime import datetime
+
 import plagiarism_checker
+from sorting_title import mergeSort 
 
 import os
 
@@ -14,6 +17,7 @@ def gui():
     root.geometry('550x400')
 
     #Global Variables
+    global Files
     Files = []
     totalSize = 0 #Running total of size of all files uploaded
     decompressFilePath = None
@@ -28,6 +32,15 @@ def gui():
                 content = file.read()
                 text_widget.delete("1.0", tk.END)
                 text_widget.insert(tk.END, content)
+
+            # Add file metadata to the Files list
+            file_metadata = {
+                "author": os.path.basename(file_path),  # Use file name as author
+                "title": os.path.splitext(os.path.basename(file_path))[0],  # File name without extension
+                "date": datetime.fromtimestamp(os.path.getmtime(file_path)).strftime("%Y-%m-%d"),  # Format date
+            }
+            Files.append(file_metadata)
+            print(f"Added file metadata: {file_metadata}")
 
     def highlight_text(text_widget, phrase):
         """ Highlights occurrences of a phrase in a text widget """
@@ -80,11 +93,23 @@ def gui():
         return filepath
 
     def details(file, output_file):
-        input_size = GetFileSize(file)
-        output_size = GetFileSize(output_file)
+        input_size = os.path.getsize(file)
+        output_size = os.path.getsize(output_file)
         ratio = round(((output_size/input_size) * 100), 2)
         detail = Label(root, text = f"Original: {input_size} bytes | Compressed: {output_size} | Ratio: {ratio}%", font=("Consolas", 8))
         detail.grid(row = 2)
+
+    def sort_files(attribute):
+        """Sort files by the specified attribute and display the sorted list."""
+        global Files
+        if not Files:
+            print("No files to sort.")
+            return
+
+        mergeSort(Files, key=attribute)  # Sort the global Files list
+        print(f"Files sorted by {attribute}:")
+        for file in Files:
+            print(file)
 
     # First file selection
     tk.Label(root, text="Select First Text Document:").grid(row=0, column=0)
@@ -110,7 +135,28 @@ def gui():
     match_button = tk.Button(root, text="Find Matches", font=("Consolas", 10), command=find_and_highlight_matches)
     match_button.grid(row=4, column=1)
 
+    # Dropdown menu for selecting the sorting attribute
+    attribute_var = tk.StringVar(root)
+    attribute_var.set("author")  # Default value
+
+    attribute_menu = tk.OptionMenu(root, attribute_var, "author", "title", "date")
+    attribute_menu.grid(row=5, column=0)
+
+    # Button to sort files based on the selected attribute
+    sort_button = tk.Button(root, text="Sort Files", font=("Consolas", 10), command=lambda: sort_files(attribute_var.get()))
+    sort_button.grid(row=5, column=1)
+
+    '''sort_author_button = tk.Button(root, text="Sort by Author", command=lambda: sort_files("author"))
+    sort_author_button.grid(row=5, column=0)
+
+    sort_title_button = tk.Button(root, text="Sort by Title", command=lambda: sort_files("title"))
+    sort_title_button.grid(row=5, column=1)
+
+    sort_date_button = tk.Button(root, text="Sort by Date", command=lambda: sort_files("date"))
+    sort_date_button.grid(row=5, column=2)'''
+
+
     # Run the application
     root.mainloop()
 
-#gui()
+gui()
