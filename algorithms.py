@@ -160,15 +160,20 @@ def build_codes(node, prefix="", code_map={}):
     return code_map
 
 # Step 4: Get user input and compute Huffman Encoding
-text = input("Enter the text to encode: ")
-freq_map = {char: text.count(char) for char in set(text)}
+def generate_huffman_codes(text):
+    freq_map = {char: text.count(char) for char in set(text)}
 
-root = build_huffman_tree(freq_map)
-codes = build_codes(root)
+    root = build_huffman_tree(freq_map)
+    codes = build_codes(root)
 
-encoded_text = ''.join(codes[char] for char in text)
-print("Huffman Codes: ", codes) 
-print("Encoded Text: ", encoded_text)
+    encoded_text = ''.join(codes[char] for char in text)
+
+    encoded_text = ''.join(codes[char] for char in text)
+    
+    original_size = len(text.encode('utf-8'))  # Original size in bytes
+    compressed_size = len(encoded_text) // 8  # Approximate compressed size in bytes
+    
+    return codes, encoded_text, original_size, compressed_size
 
 
 #### Graph Traversal ####

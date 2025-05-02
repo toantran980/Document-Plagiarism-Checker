@@ -7,6 +7,7 @@ from datetime import datetime
 import plagiarism_checker
 from sorting_title import mergeSort
 from naive import naive_search
+from algorithms import generate_huffman_codes
 
 import os
 
@@ -15,7 +16,7 @@ def gui():
     root = tk.Tk()
     root.title("Text Document Input")
     root.grid_columnconfigure(0, weight=1)
-    root.geometry('550x400')
+    root.geometry('1280x720')
 
     #Global Variables
     global Files
@@ -110,8 +111,38 @@ def gui():
         text1.configure(state='disabled')
         text2.configure(state='disabled')
 
-    def scan_and_compress():
-        pass
+    def display_huffman_codes():
+        """Generate Huffman codes and update compression statistics separately."""
+        text1_content = text1.get("1.0", tk.END).strip()
+        text2_content = text2.get("1.0", tk.END).strip()
+
+        if not text1_content or not text2_content:
+            return
+
+        # Generate Huffman codes and compression stats
+        huffman_codes1, encoded_text1, original_size1, compressed_size1 = generate_huffman_codes(text1_content)
+        huffman_codes2, encoded_text2, original_size2, compressed_size2 = generate_huffman_codes(text2_content)
+
+        ratio1 = round((compressed_size1 / original_size1) * 100, 2)
+        ratio2 = round((compressed_size2 / original_size2) * 100, 2)
+
+        # Update Huffman code text boxes
+        huffman1.delete("1.0", tk.END)
+        huffman1.insert(tk.END, f"Huffman Codes:\n{huffman_codes1}")
+
+        huffman2.delete("1.0", tk.END)
+        huffman2.insert(tk.END, f"Huffman Codes:\n{huffman_codes2}")
+
+        # Update compression stats labels
+        original_size_label1.config(text=f"Original Size: {original_size1} bytes")
+        compressed_size_label1.config(text=f"Compressed Size: {compressed_size1} bytes")
+        compression_ratio_label1.config(text=f"Compression Ratio: {ratio1}%")
+
+        original_size_label2.config(text=f"Original Size: {original_size2} bytes")
+        compressed_size_label2.config(text=f"Compressed Size: {compressed_size2} bytes")
+        compression_ratio_label2.config(text=f"Compression Ratio: {ratio2}%")
+
+
 
     def decompress_button():
         pass
@@ -192,6 +223,36 @@ def gui():
     sort_date_button = tk.Button(root, text="Sort by Date", command=lambda: sort_files("date"))
     sort_date_button.grid(row=5, column=2)'''
 
+    # Text boxes for huffman codes
+    huffman1 = tk.Text(root, height=10, width=30)
+    huffman1.grid(row=1, column=3)
+
+    huffman2 = tk.Text(root, height=10, width=30)
+    huffman2.grid(row=3, column=3)
+
+    # Labels for compression stats
+    original_size_label1 = tk.Label(root, text="Original Size: N/A")
+    original_size_label1.grid(row=6, column=0)
+
+    compressed_size_label1 = tk.Label(root, text="Compressed Size: N/A")
+    compressed_size_label1.grid(row=6, column=1)
+
+    compression_ratio_label1 = tk.Label(root, text="Compression Ratio: N/A")
+    compression_ratio_label1.grid(row=6, column=2)
+
+    original_size_label2 = tk.Label(root, text="Original Size: N/A")
+    original_size_label2.grid(row=7, column=0)
+
+    compressed_size_label2 = tk.Label(root, text="Compressed Size: N/A")
+    compressed_size_label2.grid(row=7, column=1)
+
+    compression_ratio_label2 = tk.Label(root, text="Compression Ratio: N/A")
+    compression_ratio_label2.grid(row=7, column=2)
+
+
+    # Button to generate Huffman codes
+    huffman_button = tk.Button(root, text="Generate Huffman Codes", font=("Consolas", 10), command=display_huffman_codes)
+    huffman_button.grid(row=5, column=3)
 
     # Run the application
     root.mainloop()
