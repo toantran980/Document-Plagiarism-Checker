@@ -2,7 +2,7 @@ import time
 import os
 
 # Decorator to log execution and measure runtime
-def log_execution(func):
+'''def log_execution(func):
     def wrapper(*args, **kwargs):
         print(f"Starting '{func.__name__}'...")
         start_time = time.time()
@@ -10,7 +10,7 @@ def log_execution(func):
         end_time = time.time()
         print(f"Finished '{func.__name__}' in {end_time - start_time:.6f} seconds.")
         return result
-    return wrapper
+    return wrapper'''
 
 # KMP algorithm
 def compute_lps(pattern):
@@ -115,7 +115,7 @@ def check_matching_phrases(file1, file2):
     return matching_phrases
 
 # Function to check for plagiarism between two files
-@log_execution # decorator to log execution and measure runtime
+#@log_execution # decorator to log execution and measure runtime
 def check_plagiarism(file1, file2):
     # Detect plagiarized words
     plagiarized_words = check_matching_phrases(file1, file2)
