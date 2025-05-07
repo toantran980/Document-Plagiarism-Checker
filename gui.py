@@ -3,7 +3,7 @@ from tkinter import filedialog
 from tkinter import scrolledtext
 import tkinter as tk
 from datetime import datetime
-
+import string
 import plagiarism_checker
 from sorting_title import mergeSort
 from naive import naive_search
@@ -45,16 +45,28 @@ def gui():
             print(f"Added file metadata: {file_metadata}")
 
     def highlight_text(text_widget, phrase):
-        """ Highlights occurrences of a phrase in a text widget """
+        """ Highlights occurrences of a whole word in a text widget without overlapping partial matches """
         start_index = "1.0"
+    
         while True:
             start_index = text_widget.search(phrase, start_index, stopindex=tk.END)
             if not start_index:
                 break
-            end_index = f"{start_index}+{len(phrase)}c"
-            text_widget.tag_add("match", start_index, end_index)
-            text_widget.tag_config("match", background="yellow", foreground="black")
-            start_index = end_index
+        
+            # Compute indices for checking surrounding characters
+            prev_char_index = f"{start_index}-1c"
+            next_char_index = f"{start_index}+{len(phrase)}c"
+        
+            prev_char = text_widget.get(prev_char_index, start_index)
+            next_char = text_widget.get(next_char_index, f"{next_char_index}+1c")
+
+            # Ensure match is a whole word by checking surrounding characters
+            if (prev_char in string.whitespace + string.punctuation or not prev_char) and \
+                (next_char in string.whitespace + string.punctuation or not next_char):
+                text_widget.tag_add("match", start_index, next_char_index)
+                text_widget.tag_config("match", background="yellow", foreground="black")
+
+            start_index = next_char_index
 
     def find_and_highlight_matches():
         """ Uses imported function to find matches and highlight them """
