@@ -90,11 +90,11 @@ def is_match(word1, word2):
 
 # Function to extract plagiarized words from two texts
 def check_matching_phrases(file1, file2):
-    print(os.path.exists("file1.txt"))  # Returns True if file exists
-    print(os.path.exists("file2.txt"))  # Returns True if file exists
-    if not os.path.exists(file1) or not os.path.exists(file2):
-        print("Error: One or both files do not exist.")
-        return set()
+    #print(os.path.exists("file1.txt"))  # Returns True if file exists
+    #print(os.path.exists("file2.txt"))  # Returns True if file exists
+    #if not os.path.exists(file1) or not os.path.exists(file2):
+        #print("Error: One or both files do not exist.")
+        #return set()
 
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
         text1 = f1.read().strip()
@@ -102,7 +102,7 @@ def check_matching_phrases(file1, file2):
 
     # Split texts into words
     words1 = text1.split()
-    words2 = text2.split()
+    words2 = set(text2.split())
 
     matching_phrases = set()
 
