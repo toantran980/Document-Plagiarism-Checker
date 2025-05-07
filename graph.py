@@ -50,12 +50,12 @@ def visualize_word_graph(graph):
         angle = i * angle_step
         x = 10 * cos(angle * pi / 180)  # Convert angle to radians
         y = 10 * sin(angle * pi / 180)
-        node_positions[node] = (x, y)
+        node_positions[node] = (x, y) # Assign position to node
 
     # Plot the nodes
     plt.figure(figsize=(12, 10))
     for node, (x, y) in node_positions.items():
-        plt.scatter(x, y, s=500, color="skyblue", zorder=2)
+        plt.scatter(x, y, s=1100, color="skyblue", zorder=2)
         plt.text(x, y, node, fontsize=8, ha="center", va="center", zorder=3)
 
     # Plot the edges
@@ -64,14 +64,13 @@ def visualize_word_graph(graph):
         for target in targets:
             x2, y2 = node_positions[target]
             dx, dy = x2 - x1, y2 - y1
-            distance = (dx**2 + dy**2)**0.5
+            distance = (dx**2 + dy**2)**0.4
 
             # Adjust arrow length to touch the edge of the target node bubble
             arrow_length = distance - node_radius
             dx_scaled = dx * (arrow_length / distance)
             dy_scaled = dy * (arrow_length / distance)
-            plt.arrow( x1, y1, dx_scaled, dy_scaled, head_width=0.3, head_length=0.5, fc="black", ec="black",length_includes_head=True, zorder=1
-            )
+            plt.arrow( x1, y1, dx_scaled, dy_scaled, head_width=0.3, head_length=0.5, fc="black", ec="black",length_includes_head=True, zorder=1)
 
     plt.title("Citation Network")
     plt.axis("off")
