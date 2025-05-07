@@ -3,6 +3,7 @@ from tkinter import filedialog
 from tkinter import scrolledtext
 import tkinter as tk
 from datetime import datetime
+import re
 
 import plagiarism_checker
 from sorting_title import mergeSort
@@ -54,6 +55,23 @@ def gui():
             text_widget.tag_add("match", start_index, end_index)
             text_widget.tag_config("match", background="yellow", foreground="black")
             start_index = end_index
+
+    def highlight_text2(text_widget, phrase):
+        min_length = 1
+        """ Highlights occurrences of a full word in a text widget if it's at least min_length characters long """
+        if len(phrase) < min_length:
+            return  # Skip highlighting if the phrase is too short
+
+        start_index = "1.0"
+        while True:
+            # Use regex to find whole-word matches
+            match_index = text_widget.search(rf'\b{re.escape(phrase)}\b', start_index, stopindex="end", regexp=True)
+            if not match_index:
+                break
+            end_index = f"{match_index}+{len(phrase)}c"
+            text_widget.tag_add("match", match_index, end_index)
+            text_widget.tag_config("match", background="yellow", foreground="black")
+            start_index = exec
 
     def find_and_highlight_matches():
         """ Uses imported function to find matches and highlight them """
