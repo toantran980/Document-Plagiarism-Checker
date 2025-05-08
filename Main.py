@@ -2,10 +2,10 @@
 
 import tkinter as tk
 from tkinter import filedialog
-from gui import gui
+from gui_new import gui
 
 def main():
-    gui() #launches the gui from gui.py
+    gui() #launches the gui from new_gui.py
 
 
 if __name__ == "__main__":

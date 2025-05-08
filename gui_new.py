@@ -8,7 +8,7 @@ import re
 import plagiarism_checker
 from sorting_title import mergeSort
 from naive import naive_search
-from algorithms import generate_huffman_codes
+from sample_algorithms import generate_huffman_codes
 
 # Import graph-related functions
 from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal, count_word_occurrences
@@ -61,7 +61,7 @@ def gui():
             text_widget.tag_config("match", background="yellow", foreground="black")
             start_index = end_index
 
-    def highlight_text2(text_widget, phrase):
+    '''def highlight_text2(text_widget, phrase):
         min_length = 1
         """ Highlights occurrences of a full word in a text widget if it's at least min_length characters long """
         if len(phrase) < min_length:
@@ -76,7 +76,7 @@ def gui():
             end_index = f"{match_index}+{len(phrase)}c"
             text_widget.tag_add("match", match_index, end_index)
             text_widget.tag_config("match", background="yellow", foreground="black")
-            start_index = exec
+            start_index = exec'''
 
     def find_and_highlight_matches():
         """ Uses imported function to find matches and highlight them """
@@ -166,12 +166,30 @@ def gui():
 
     def clear_all():
         """Clear all text fields and reset the GUI."""
+        text1.configure(state='normal')
+        text2.configure(state='normal')
+        entry1.config(state='normal')
+        entry2.config(state='normal')
+        entry3.config(state='normal')
+
         text1.delete("1.0", tk.END)
         text2.delete("1.0", tk.END)
         entry1.delete(0, tk.END)
         entry2.delete(0, tk.END)
-        print("All fields cleared.")
+        entry3.delete(0, tk.END)
+        huffman1.delete("1.0", tk.END)
+        huffman2.delete("1.0", tk.END)
 
+        #text1.tag_remove("match", "1.0", tk.END)
+        #text2.tag_remove("match", "1.0", tk.END)
+        
+        original_size_label1.config(text="Original Size: N/A")
+        compressed_size_label1.config(text="Compressed Size: N/A")
+        compression_ratio_label1.config(text="Compression Ratio: N/A")
+        original_size_label2.config(text="Original Size: N/A")
+        compressed_size_label2.config(text="Compressed Size: N/A")
+        compression_ratio_label2.config(text="Compression Ratio: N/A")
+    
     def stop_traversal_action():
         """Stop the graph traversal."""
         global stop_traversal
@@ -230,6 +248,7 @@ def gui():
             print("DFS Traversal Order:", traversal_order)
             visualize_word_graph_with_traversal(word_graph, traversal_order, word_counts, lambda: stop_traversal)
     
+    # Function to open a file dialog and return the selected file path
     def openFile():
         filepath = filedialog.askopenfilename()
         return filepath
@@ -337,6 +356,7 @@ def gui():
     attribute_var = tk.StringVar(root)
     attribute_var.set("author")  # Default value
 
+    # Dropdown menu for selecting the attribute to sort by
     attribute_menu = tk.OptionMenu(topFrame4, attribute_var, "author", "title", "date")
     attribute_menu.pack(side = RIGHT)
 
@@ -397,5 +417,4 @@ def gui():
     # Run the application
     root.mainloop()
 
-
-gui()
+#gui()
