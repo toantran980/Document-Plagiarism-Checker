@@ -17,17 +17,20 @@ def extract_words_from_file(file):
         text = f.read().lower()  # Convert to lowercase for consistency
         return text.split()  # Split text into words
 
-def build_word_graph(words):
+def build_word_graph(words, matched_words):
     """
     Build a graph where nodes are words and edges represent consecutive word relationships.
+    Only include words that are in the matched_words set.
     :param words: List of words.
-    :return: A dictionary representing the graph.
+    :param matched_words: Set of matched words to include in the graph.
+    :return: A dictionary representing the filtered graph.
     """
     graph = {}
     for i in range(len(words) - 1):
         word1, word2 = words[i], words[i + 1]
-        graph.setdefault(word1, []).append(word2)
-        graph.setdefault(word2, [])
+        if word1 in matched_words and word2 in matched_words:
+            graph.setdefault(word1, []).append(word2)
+            graph.setdefault(word2, [])
     return graph
 
 def visualize_word_graph_with_traversal(graph, traversal_order, stop_flag):
@@ -41,7 +44,7 @@ def visualize_word_graph_with_traversal(graph, traversal_order, stop_flag):
     num_nodes = len(nodes)
     angle_step = 360 / num_nodes
     node_positions = {
-        node: (10 * cos(i * angle_step * pi / 180), 10 * sin(i * angle_step * pi / 180))
+        node: (10 * cos(i * angle_step * pi / 180), 10 * sin(i * angle_step * pi / 180)) # convert to radians
         for i, node in enumerate(nodes)
     }
     node_radius = 0.5
@@ -66,7 +69,8 @@ def visualize_word_graph_with_traversal(graph, traversal_order, stop_flag):
                 dx, dy = x2 - x1, y2 - y1
                 distance = (dx**2 + dy**2)**0.5
                 arrow_length = distance - node_radius
-                dx_scaled, dy_scaled = dx * (arrow_length / distance), dy * (arrow_length / distance)
+                dx_scaled = dx * (arrow_length / distance)
+                dy_scaled = dy * (arrow_length / distance)
                 plt.arrow(
                     x1, y1, dx_scaled, dy_scaled,
                     head_width=0.3, head_length=0.5, fc="black", ec="black",
@@ -88,21 +92,22 @@ def bfs(graph, start):
     """
     visited = set()
     queue = deque([start])
-    traversal_order = []
+    traversal_order = []  # List to store the traversal order
 
     while queue:
         node = queue.popleft()
         if node not in visited:
-            traversal_order.append(node)
+            traversal_order.append(node)  # Add node to traversal order
             visited.add(node)
             queue.extend(neighbor for neighbor in graph.get(node, []) if neighbor not in visited)
+
     return traversal_order
 
-def dfs(graph, start, visited=None, traversal_order=None):
+def dfs(graph, node, visited=None, traversal_order=None):
     """
     Depth-First Search to traverse the graph.
     :param graph: Dictionary representing the word graph.
-    :param start: Starting node for DFS.
+    :param node: Starting node for DFS.
     :param visited: Set of visited nodes (used for recursion).
     :param traversal_order: List of nodes in the order they are visited.
     :return: List of nodes in the order they are visited.
@@ -112,11 +117,12 @@ def dfs(graph, start, visited=None, traversal_order=None):
     if traversal_order is None:
         traversal_order = []
 
-    visited.add(start)
-    traversal_order.append(start)
+    if node not in visited:
+        visited.add(node)  # Mark the node as visited
+        traversal_order.append(node)  # Add node to traversal order
 
-    for neighbor in graph.get(start, []):
-        if neighbor not in visited:
+        # Recursively visit each unvisited neighbor
+        for neighbor in graph.get(node, []):
             dfs(graph, neighbor, visited, traversal_order)
 
     return traversal_order

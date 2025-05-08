@@ -117,9 +117,13 @@ def check_matching_phrases(file1, file2):
     return matching_phrases
 
 # Function to check for plagiarism between two files
-#@log_execution # decorator to log execution and measure runtime
 def check_plagiarism(file1, file2):
-    # Detect plagiarized words
+    """
+    Check for plagiarism between two files and return matched words.
+    :param file1: Path to the first file.
+    :param file2: Path to the second file.
+    :return: Set of matched words.
+    """
     plagiarized_words = check_matching_phrases(file1, file2)
 
     if plagiarized_words:
@@ -128,7 +132,7 @@ def check_plagiarism(file1, file2):
     else:
         print("No plagiarism detected.")
 
-    return plagiarized_words
+    return set(plagiarized_words)
 
 # Example input files
 #file1 = 'file1.txt'  # Content: "Hello, this is pencil pen."
