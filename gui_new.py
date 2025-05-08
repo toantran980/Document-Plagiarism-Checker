@@ -4,6 +4,7 @@ from tkinter import scrolledtext
 import tkinter as tk
 from datetime import datetime
 import re
+import string
 
 import plagiarism_checker
 from sorting_title import mergeSort
@@ -13,6 +14,8 @@ from sample_algorithms import generate_huffman_codes
 # Import graph-related functions
 from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal, count_word_occurrences
 import os
+
+from tkinter import messagebox
 
 # Global flag for stopping traversal
 stop_traversal = False
@@ -50,18 +53,37 @@ def gui():
             print(f"Added file metadata: {file_metadata}")
 
     def highlight_text(text_widget, phrase):
-        """ Highlights occurrences of a phrase in a text widget """
+        """Highlights occurrences of a phrase in a text widget, ensuring whole-word matches."""
+        if not phrase:  # Skip if the phrase is empty
+            return
+
         start_index = "1.0"
         while True:
+            # Search for the phrase in the text widget
             start_index = text_widget.search(phrase, start_index, stopindex=tk.END)
             if not start_index:
                 break
+
+            # Calculate the end index of the match
             end_index = f"{start_index}+{len(phrase)}c"
-            text_widget.tag_add("match", start_index, end_index)
-            text_widget.tag_config("match", background="yellow", foreground="black")
+
+            # Get the surrounding characters
+            prev_char_index = f"{start_index}-1c"
+            next_char_index = f"{end_index}+1c"
+
+            prev_char = text_widget.get(prev_char_index, start_index)
+            next_char = text_widget.get(end_index, next_char_index)
+
+            # Ensure match is a whole word by checking surrounding characters
+            if (prev_char in string.whitespace + string.punctuation or not prev_char) and \
+                (next_char in string.whitespace + string.punctuation or not next_char):
+                text_widget.tag_add("match", start_index, end_index)
+                text_widget.tag_config("match", background="yellow", foreground="black")
+
+            # Move to the next match
             start_index = end_index
 
-    '''def highlight_text2(text_widget, phrase):
+    def highlight_text2(text_widget, phrase):
         min_length = 1
         """ Highlights occurrences of a full word in a text widget if it's at least min_length characters long """
         if len(phrase) < min_length:
@@ -76,7 +98,7 @@ def gui():
             end_index = f"{match_index}+{len(phrase)}c"
             text_widget.tag_add("match", match_index, end_index)
             text_widget.tag_config("match", background="yellow", foreground="black")
-            start_index = exec'''
+            start_index = exec
 
     def find_and_highlight_matches():
         """ Uses imported function to find matches and highlight them """
@@ -180,9 +202,6 @@ def gui():
         huffman1.delete("1.0", tk.END)
         huffman2.delete("1.0", tk.END)
 
-        #text1.tag_remove("match", "1.0", tk.END)
-        #text2.tag_remove("match", "1.0", tk.END)
-        
         original_size_label1.config(text="Original Size: N/A")
         compressed_size_label1.config(text="Compressed Size: N/A")
         compression_ratio_label1.config(text="Compression Ratio: N/A")
@@ -265,12 +284,16 @@ def gui():
         global Files
         if not Files:
             print("No files to sort.")
+            messagebox.showinfo("Sort Files", "No files to sort.")
             return
 
         mergeSort(Files, key=attribute)  # Sort the global Files list
         print(f"Files sorted by {attribute}:")
         for file in Files:
             print(file)
+
+        # Show a confirmation popup
+        messagebox.showinfo("Sort Files", f"Files have been sorted by {attribute}.")
 
     #Everything below this point is to make the actual buttons and boxes and stuff
 
@@ -417,4 +440,5 @@ def gui():
     # Run the application
     root.mainloop()
 
-#gui()
+
+gui()

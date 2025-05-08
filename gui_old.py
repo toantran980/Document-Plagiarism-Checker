@@ -260,4 +260,4 @@ def gui():
     # Run the application
     root.mainloop()
 
-gui()
+#gui()

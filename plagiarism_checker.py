@@ -90,11 +90,11 @@ def check_matching_phrases(file1, file2):
 
     # Compare each word in words1 with words2 using the helper function
     for word1 in words1:
-        if len(word1) >= 3:
-            for word2 in words2:
-                if len(word2) >= 3:
-                    if is_match(word1, word2):
-                        matching_phrases.add(word2)
+        #if len(word1) >= 3:
+        for word2 in words2:
+                #if len(word2) >= 3:
+                if is_match(word1, word2):
+                    matching_phrases.add(word2)
 
     return matching_phrases
 
