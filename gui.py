@@ -226,15 +226,6 @@ def gui():
     sort_button = tk.Button(root, text="Sort Files", font=("Consolas", 10), command=lambda: sort_files(attribute_var.get()))
     sort_button.grid(row=5, column=1)
 
-    '''sort_author_button = tk.Button(root, text="Sort by Author", command=lambda: sort_files("author"))
-    sort_author_button.grid(row=5, column=0)
-
-    sort_title_button = tk.Button(root, text="Sort by Title", command=lambda: sort_files("title"))
-    sort_title_button.grid(row=5, column=1)
-
-    sort_date_button = tk.Button(root, text="Sort by Date", command=lambda: sort_files("date"))
-    sort_date_button.grid(row=5, column=2)'''
-
     # Text boxes for huffman codes
     huffman1 = tk.Text(root, height=10, width=30)
     huffman1.grid(row=1, column=3)

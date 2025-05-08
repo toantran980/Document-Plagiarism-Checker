@@ -10,7 +10,12 @@ from sorting_title import mergeSort
 from naive import naive_search
 from algorithms import generate_huffman_codes
 
+# Import graph-related functions
+from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal
 import os
+
+# Global flag for stopping traversal
+stop_traversal = False
 
 def gui():
     #root setup
@@ -19,7 +24,7 @@ def gui():
     root.geometry('1120x720')
 
     #Global Variables
-    global Files
+    global Files, stop_traversal
     Files = []
     totalSize = 0 #Running total of size of all files uploaded
     decompressFilePath = None
@@ -159,6 +164,57 @@ def gui():
         compressed_size_label2.config(text=f"Compressed Size: {compressed_size2} bytes")
         compression_ratio_label2.config(text=f"Compression Ratio: {ratio2}%")
 
+    def clear_all():
+        """Clear all text fields and reset the GUI."""
+        text1.delete("1.0", tk.END)
+        text2.delete("1.0", tk.END)
+        entry1.delete(0, tk.END)
+        entry2.delete(0, tk.END)
+        print("All fields cleared.")
+
+    def stop_traversal_action():
+        """Stop the graph traversal."""
+        global stop_traversal
+        stop_traversal = True
+        print("Traversal stopped by user.")
+
+    def visualize_graph(traversal_type):
+        """Visualize the word graph with BFS or DFS traversal."""
+        global stop_traversal
+        stop_traversal = False  # Reset the stop flag
+
+        # Get the text content from the text widgets
+        text1_content = text1.get("1.0", tk.END).strip()
+        text2_content = text2.get("1.0", tk.END).strip()
+
+        if not text1_content or not text2_content:
+            print("Error: Both text documents must be loaded.")
+            return
+
+        # Combine words from both text documents
+        words1 = text1_content.split()
+        words2 = text2_content.split()
+        all_words = words1 + words2
+
+        # Build the word graph
+        word_graph = build_word_graph(all_words)
+
+        # Perform the selected traversal
+        start_node = words1[0] if words1 else None  # Use the first word as the start node
+        if not start_node:
+            print("Error: No words found in the first document.")
+            return
+
+        if traversal_type == "bfs":
+            print("\nPerforming BFS Traversal:")
+            traversal_order = bfs(word_graph, start_node)
+            print("BFS Traversal Order:", traversal_order)
+            visualize_word_graph_with_traversal(word_graph, traversal_order, lambda: stop_traversal)
+        elif traversal_type == "dfs":
+            print("\nPerforming DFS Traversal:")
+            traversal_order = dfs(word_graph, start_node)
+            print("DFS Traversal Order:", traversal_order)
+            visualize_word_graph_with_traversal(word_graph, traversal_order, lambda: stop_traversal)
 
     def openFile():
         filepath = filedialog.askopenfilename()
@@ -264,20 +320,25 @@ def gui():
     sort_button = tk.Button(topFrame3, text="Sort Files", font=("Consolas", 10), command=lambda: sort_files(attribute_var.get()))
     sort_button.pack(side = RIGHT)
 
-    '''sort_author_button = tk.Button(root, text="Sort by Author", command=lambda: sort_files("author"))
-    sort_author_button.grid(row=5, column=0)
-
-    sort_title_button = tk.Button(root, text="Sort by Title", command=lambda: sort_files("title"))
-    sort_title_button.grid(row=5, column=1)
-
-    sort_date_button = tk.Button(root, text="Sort by Date", command=lambda: sort_files("date"))
-    sort_date_button.grid(row=5, column=2)'''
-
     # Button to generate Huffman codes
     huffman_button = tk.Button(topFrame3, text="Generate Huffman Codes", font=("Consolas", 10), command=display_huffman_codes)
     huffman_button.pack(side = RIGHT)
-    
-    
+
+    # Visualize BFS button
+    graph_button_bfs = tk.Button(topFrame3, text="Visualize BFS Graph", font=("Consolas", 10), command=lambda: visualize_graph("bfs"))
+    graph_button_bfs.pack(side=tk.LEFT)
+
+    # Visualize DFS button
+    graph_button_dfs = tk.Button(topFrame3, text="Visualize DFS Graph", font=("Consolas", 10), command=lambda: visualize_graph("dfs"))
+    graph_button_dfs.pack(side=tk.LEFT)
+
+    # Stop Traversal button
+    stop_button = tk.Button(topFrame3, text="Stop Traversal", font=("Consolas", 10), command=stop_traversal_action)
+    stop_button.pack(side=tk.LEFT)
+
+    # Clear All button
+    clear_button = tk.Button(topFrame3, text="Clear All", font=("Consolas", 10), command=clear_all)
+    clear_button.pack(side=tk.LEFT)
     
     # Run the application
     root.mainloop()
