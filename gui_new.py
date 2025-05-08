@@ -11,7 +11,7 @@ from naive import naive_search
 from algorithms import generate_huffman_codes
 
 # Import graph-related functions
-from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal
+#from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal
 import os
 
 # Global flag for stopping traversal
@@ -21,7 +21,7 @@ def gui():
     #root setup
     root = tk.Tk()
     root.title("Text Document Input")
-    root.geometry('1120x720')
+    root.geometry('1120x550')
 
     #Global Variables
     global Files, stop_traversal
@@ -177,7 +177,7 @@ def gui():
         global stop_traversal
         stop_traversal = True
         print("Traversal stopped by user.")
-
+    '''
     def visualize_graph(traversal_type):
         """Visualize the word graph with BFS or DFS traversal for matched highlighted text."""
         global stop_traversal
@@ -228,7 +228,7 @@ def gui():
             traversal_order = dfs(word_graph, start_node)
             print("DFS Traversal Order:", traversal_order)
             visualize_word_graph_with_traversal(word_graph, traversal_order, lambda: stop_traversal)
-
+    '''
     def openFile():
         filepath = filedialog.askopenfilename()
         return filepath
