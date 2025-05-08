@@ -110,9 +110,3 @@ def check_plagiarism(file1, file2):
 
     return set(plagiarized_words)
 
-# Example input files
-#file1 = 'file1.txt'  # Content: "Hello, this is pencil pen."
-#file2 = 'file2.txt'  # Content: "Hello, this is a pen."
-
-# Detect plagiarized content
-#check_plagiarism(file1, file2)

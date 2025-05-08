@@ -1,7 +1,4 @@
 # Main implementation 
-
-import tkinter as tk
-from tkinter import filedialog
 from gui_new import gui
 
 def main():

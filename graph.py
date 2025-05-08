@@ -5,14 +5,9 @@
 from collections import deque
 import matplotlib.pyplot as plt
 from math import cos, sin, pi
-import os
 
 def extract_words_from_file(file):
-    """
-    Extract words from a text file.
-    :param file: Path to the text file.
-    :return: List of words in the file.
-    """
+    """Extract words from a text file."""
     with open(file, 'r') as f:
         text = f.read().lower()  # Convert to lowercase for consistency
         return text.split()  # Split text into words
@@ -28,9 +23,6 @@ def build_word_graph(words, matched_words):
     """
     Build a graph where nodes are words and edges represent consecutive word relationships.
     Only include words that are in the matched_words set.
-    :param words: List of words.
-    :param matched_words: Set of matched words to include in the graph.
-    :return: A dictionary representing the filtered graph.
     """
     graph = {}
     for i in range(len(words) - 1):
@@ -41,12 +33,7 @@ def build_word_graph(words, matched_words):
     return graph
 
 def visualize_word_graph_with_traversal(graph, traversal_order, word_counts, stop_flag):
-    """
-    Visualize the word network using Matplotlib with traversal visualization.
-    :param graph: Dictionary representing the word graph.
-    :param traversal_order: List of nodes in the order they are visited during traversal.
-    :param stop_flag: A flag to stop the traversal.
-    """
+    """Visualize the word network using Matplotlib with traversal visualization."""
     nodes = list(graph.keys())
     num_nodes = len(nodes)
     angle_step = 360 / max(1, num_nodes)  # Avoid division by zero
@@ -83,12 +70,7 @@ def visualize_word_graph_with_traversal(graph, traversal_order, word_counts, sto
     plt.show()
 
 def bfs(graph, start):
-    """
-    Breadth-First Search to traverse the graph.
-    :param graph: Dictionary representing the word graph.
-    :param start: Starting node for BFS.
-    :return: List of nodes in the order they are visited.
-    """
+    """Breadth-First Search to traverse the graph."""
     visited = set()
     queue = deque([start])
     traversal_order = []  # List to store the traversal order
@@ -103,14 +85,7 @@ def bfs(graph, start):
     return traversal_order
 
 def dfs(graph, node, visited=None, traversal_order=None):
-    """
-    Depth-First Search to traverse the graph.
-    :param graph: Dictionary representing the word graph.
-    :param node: Starting node for DFS.
-    :param visited: Set of visited nodes (used for recursion).
-    :param traversal_order: List of nodes in the order they are visited.
-    :return: List of nodes in the order they are visited.
-    """
+    """Depth-First Search to traverse the graph."""
     if visited is None:
         visited = set()
     if traversal_order is None:

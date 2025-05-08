@@ -35,27 +35,3 @@ def mergeSort(files, key):
             j += 1
             k += 1
 
-# Example usage
-'''if __name__ == "__main__":
-    # Example list of files 
-    files = [
-        {"author": "Alice", "title": "Document A", "date": "2023-01-01"},
-        {"author": "Bob", "title": "Document B", "date": "2022-12-31"},
-        {"author": "Charlie", "title": "Document C", "date": "2023-01-02"},
-    ]
-
-    # Sort files by author
-    print("Sorting by author:")
-    mergeSort(files, key="author")
-    print(files)
-
-    # Sort files by title
-    print("\nSorting by title:")
-    mergeSort(files, key="title")
-    print(files)
-
-    # Sort files by date
-    print("\nSorting by date:")
-    mergeSort(files, key="date")
-    print(files)'''
-
