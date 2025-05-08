@@ -17,6 +17,13 @@ def extract_words_from_file(file):
         text = f.read().lower()  # Convert to lowercase for consistency
         return text.split()  # Split text into words
 
+def count_word_occurrences(words):
+    """Count occurrences of each word in the document."""
+    word_counts = {}
+    for word in words:
+        word_counts[word] = word_counts.get(word, 0) + 1
+    return word_counts
+
 def build_word_graph(words, matched_words):
     """
     Build a graph where nodes are words and edges represent consecutive word relationships.
@@ -33,7 +40,7 @@ def build_word_graph(words, matched_words):
             graph.setdefault(word2, [])
     return graph
 
-def visualize_word_graph_with_traversal(graph, traversal_order, stop_flag):
+def visualize_word_graph_with_traversal(graph, traversal_order, word_counts, stop_flag):
     """
     Visualize the word network using Matplotlib with traversal visualization.
     :param graph: Dictionary representing the word graph.
@@ -42,40 +49,32 @@ def visualize_word_graph_with_traversal(graph, traversal_order, stop_flag):
     """
     nodes = list(graph.keys())
     num_nodes = len(nodes)
-    angle_step = 360 / num_nodes
+    angle_step = 360 / max(1, num_nodes)  # Avoid division by zero
     node_positions = {
-        node: (10 * cos(i * angle_step * pi / 180), 10 * sin(i * angle_step * pi / 180)) # convert to radians
+        node: (10 * cos(i * angle_step * pi / 180), 10 * sin(i * angle_step * pi / 180))
         for i, node in enumerate(nodes)
     }
-    node_radius = 0.5
-
+    
     plt.figure(figsize=(12, 10))
     for i, current_node in enumerate(traversal_order):
-        if stop_flag():  # Check if the stop button was pressed
+        if stop_flag():
             print("Traversal stopped.")
             break
 
-        plt.clf()  # Clear the figure for dynamic updates
+        plt.clf()
 
         for node, (x, y) in node_positions.items():
+            size = 800 + (word_counts.get(node, 1) * 200)  # Scale node size based on frequency
             color = "red" if node == current_node else "skyblue"
-            plt.scatter(x, y, s=1100, color=color, zorder=2)
-            plt.text(x, y, node, fontsize=8, ha="center", va="center", zorder=3)
+            plt.scatter(x, y, s=size, color=color, zorder=2)
+            plt.text(x, y, f"{node} ({word_counts.get(node, 0)})", fontsize=9, ha="center", va="center", zorder=3)
 
         for source, targets in graph.items():
             x1, y1 = node_positions[source]
             for target in targets:
                 x2, y2 = node_positions[target]
-                dx, dy = x2 - x1, y2 - y1
-                distance = (dx**2 + dy**2)**0.5
-                arrow_length = distance - node_radius
-                dx_scaled = dx * (arrow_length / distance)
-                dy_scaled = dy * (arrow_length / distance)
-                plt.arrow(
-                    x1, y1, dx_scaled, dy_scaled,
-                    head_width=0.3, head_length=0.5, fc="black", ec="black",
-                    length_includes_head=True, zorder=1
-                )
+                plt.arrow(x1, y1, x2 - x1, y2 - y1, head_width=0.3, head_length=0.5, fc="black", ec="black",
+                          length_includes_head=True, zorder=1)
 
         plt.title(f"Traversal Visualization: Step {i + 1}/{len(traversal_order)}")
         plt.axis("off")

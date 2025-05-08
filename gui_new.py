@@ -11,7 +11,7 @@ from naive import naive_search
 from algorithms import generate_huffman_codes
 
 # Import graph-related functions
-from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal
+from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal, count_word_occurrences
 import os
 
 # Global flag for stopping traversal
@@ -195,6 +195,7 @@ def gui():
         words1 = text1_content.split()
         words2 = text2_content.split()
         all_words = words1 + words2
+        word_counts = count_word_occurrences(all_words)
 
         # Get the matched highlighted text
         matched_words = plagiarism_checker.check_plagiarism(entry1.get(), entry2.get())
@@ -222,12 +223,12 @@ def gui():
             print("\nPerforming BFS Traversal:")
             traversal_order = bfs(word_graph, start_node)
             print("BFS Traversal Order:", traversal_order)
-            visualize_word_graph_with_traversal(word_graph, traversal_order, lambda: stop_traversal)
+            visualize_word_graph_with_traversal(word_graph, traversal_order, word_counts, lambda: stop_traversal)
         elif traversal_type == "dfs":
             print("\nPerforming DFS Traversal:")
             traversal_order = dfs(word_graph, start_node)
             print("DFS Traversal Order:", traversal_order)
-            visualize_word_graph_with_traversal(word_graph, traversal_order, lambda: stop_traversal)
+            visualize_word_graph_with_traversal(word_graph, traversal_order, word_counts, lambda: stop_traversal)
     
     def openFile():
         filepath = filedialog.askopenfilename()
