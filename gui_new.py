@@ -11,7 +11,7 @@ from naive import naive_search
 from algorithms import generate_huffman_codes
 
 # Import graph-related functions
-from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal
+#from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal
 import os
 
 # Global flag for stopping traversal
@@ -21,7 +21,7 @@ def gui():
     #root setup
     root = tk.Tk()
     root.title("Text Document Input")
-    root.geometry('1120x720')
+    root.geometry('1120x550')
 
     #Global Variables
     global Files, stop_traversal
@@ -177,7 +177,7 @@ def gui():
         global stop_traversal
         stop_traversal = True
         print("Traversal stopped by user.")
-
+    '''
     def visualize_graph(traversal_type):
         """Visualize the word graph with BFS or DFS traversal."""
         global stop_traversal
@@ -215,7 +215,7 @@ def gui():
             traversal_order = dfs(word_graph, start_node)
             print("DFS Traversal Order:", traversal_order)
             visualize_word_graph_with_traversal(word_graph, traversal_order, lambda: stop_traversal)
-
+    '''
     def openFile():
         filepath = filedialog.askopenfilename()
         return filepath
@@ -251,10 +251,12 @@ def gui():
     rightFrame.pack(fill=tk.X, padx=10, pady=5, side = RIGHT)
 
     lowestFrame = tk.Frame(root)
-    lowestFrame.pack(side = BOTTOM)
+    lowestFrame.pack()
     
-    bottomFrame = tk.Frame(lowestFrame, bd=2, relief=tk.RIDGE, padx=10, pady=10)
-    bottomFrame.pack(fill=tk.X, padx=10, pady=5)
+    left2 = tk.Frame(lowestFrame, padx=10, pady=10)
+    left2.pack(side = LEFT)
+    right2 = tk.Frame(lowestFrame, padx=10, pady=10)
+    right2.pack(side = RIGHT)
 
     #First Document Selection
     topFrame1 = tk.Frame(leftFrame)
@@ -303,25 +305,33 @@ def gui():
     huffman2.pack()
 
     #All the other stuff goes here
-    topFrame3 = tk.Frame(bottomFrame).pack()
+    topFrame3 = tk.Frame(left2)
+    topFrame3.pack(side = TOP)
+    bottomFrame3 = tk.Frame(left2, bd=2, relief=tk.RIDGE, padx=10, pady=10)
+    bottomFrame3.pack(fill=tk.X, padx=10, pady=5)
+
+    topFrame4 = tk.Frame(right2)
+    topFrame4.pack(side = TOP)
+    bottomFrame4 = tk.Frame(right2, bd=2, relief=tk.RIDGE, padx=10, pady=10)
+    bottomFrame4.pack(fill=tk.X, padx=10, pady=5)
 
     # Button to find matches
-    match_button = tk.Button(topFrame3, text="Find Matches", font=("Consolas", 10), command=find_and_highlight_matches)
+    match_button = tk.Button(topFrame4, text="Find Matches", font=("Consolas", 10), command=find_and_highlight_matches)
     match_button.pack(side = RIGHT)
 
     # Dropdown menu for selecting the sorting attribute
     attribute_var = tk.StringVar(root)
     attribute_var.set("author")  # Default value
 
-    attribute_menu = tk.OptionMenu(topFrame3, attribute_var, "author", "title", "date")
+    attribute_menu = tk.OptionMenu(topFrame4, attribute_var, "author", "title", "date")
     attribute_menu.pack(side = RIGHT)
 
     # Button to sort files based on the selected attribute
-    sort_button = tk.Button(topFrame3, text="Sort Files", font=("Consolas", 10), command=lambda: sort_files(attribute_var.get()))
+    sort_button = tk.Button(topFrame4, text="Sort Files", font=("Consolas", 10), command=lambda: sort_files(attribute_var.get()))
     sort_button.pack(side = RIGHT)
 
     # Button to generate Huffman codes
-    huffman_button = tk.Button(topFrame3, text="Generate Huffman Codes", font=("Consolas", 10), command=display_huffman_codes)
+    huffman_button = tk.Button(topFrame4, text="Generate Huffman Codes", font=("Consolas", 10), command=display_huffman_codes)
     huffman_button.pack(side = RIGHT)
 
     # Visualize BFS button
@@ -337,8 +347,33 @@ def gui():
     stop_button.pack(side=tk.LEFT)
 
     # Clear All button
-    clear_button = tk.Button(topFrame3, text="Clear All", font=("Consolas", 10), command=clear_all)
-    clear_button.pack(side=tk.LEFT)
+    clear_button = tk.Button(bottomFrame4, text="Clear All", font=("Consolas", 10), command=clear_all)
+    clear_button.pack(side= RIGHT)
+
+    # Labels for compression stats
+    original_size_label1 = tk.Label(bottomFrame3, text="Original Size: N/A")
+    original_size_label1.pack()
+
+    compressed_size_label1 = tk.Label(bottomFrame3, text="Compressed Size: N/A")
+    compressed_size_label1.pack()
+
+    compression_ratio_label1 = tk.Label(bottomFrame3, text="Compression Ratio: N/A")
+    compression_ratio_label1.pack()
+
+    original_size_label2 = tk.Label(bottomFrame3, text="Original Size: N/A")
+    original_size_label2.pack()
+
+    compressed_size_label2 = tk.Label(bottomFrame3, text="Compressed Size: N/A")
+    compressed_size_label2.pack()
+
+    compression_ratio_label2 = tk.Label(bottomFrame3, text="Compression Ratio: N/A")
+    compression_ratio_label2.pack()
+
+    # Box to enter search term
+    entry3 = tk.Entry(bottomFrame4, width = 50)
+    entry3.pack(side = RIGHT)
+    search_button = tk.Button(bottomFrame4, text = "Search", font=("Consolas", 10), command=find_and_highlight_terms)
+    search_button.pack(side = RIGHT)
     
     # Run the application
     root.mainloop()
