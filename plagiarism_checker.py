@@ -70,10 +70,24 @@ def rabin_karp(text, pattern, q = 101):
 
     return positions
 
+def hybrid_match(text, pattern, q=101):
+    """Combines Rabin-Karp and KMP for hybrid matching"""
+    # Step 1: Use Rabin-Karp for initial filtering
+    potential_matches = rabin_karp(text, pattern, q)
+
+    # Step 2: Verify matches with KMP
+    confirmed_matches = []
+    for start_index in potential_matches:
+        # Use KMP to confirm the match
+        if kmp_search(text[start_index:], pattern):
+            confirmed_matches.append(start_index)
+
+    return confirmed_matches
+
 # Helper function to check if a word matches using Rabin-Karp or KMP
 def is_match(word1, word2):
-    # Ensure word1 is longer or equal in length to word2
-    return len(word1) >= len(word2) and (kmp_search(word1, word2) or rabin_karp(word1,word2))
+    """Checks if two words match using the hybrid Rabin-Karp and KMP approach."""
+    return len(word1) >= len(word2) and hybrid_match(word1, word2)
 
 # Function to extract plagiarized words from two texts
 def check_matching_phrases(file1, file2):
