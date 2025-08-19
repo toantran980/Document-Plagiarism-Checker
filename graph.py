@@ -24,12 +24,14 @@ def build_word_graph(words, matched_words):
     Build a graph where nodes are words and edges represent consecutive word relationships.
     Only include words that are in the matched_words set.
     """
-    graph = {}
+    # If matched_words is a tuple (set, similarity), unpack it
+    if isinstance(matched_words, tuple):
+        matched_words = matched_words[0]
+    graph = {word: [] for word in matched_words}  # Ensure all matched words are nodes
     for i in range(len(words) - 1):
         word1, word2 = words[i], words[i + 1]
         if word1 in matched_words and word2 in matched_words:
-            graph.setdefault(word1, []).append(word2)
-            graph.setdefault(word2, [])
+            graph[word1].append(word2)
     return graph
 
 def visualize_word_graph_with_traversal(graph, traversal_order, word_counts, stop_flag):

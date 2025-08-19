@@ -1,4 +1,3 @@
-
 # KMP algorithm
 def compute_lps(pattern):
     m = len(pattern)
@@ -116,11 +115,27 @@ def check_matching_phrases(file1, file2):
 def check_plagiarism(file1, file2):
     plagiarized_words = check_matching_phrases(file1, file2)
 
-    if plagiarized_words:
-        print("Plagiarism detected!")
-        print("Plagiarized content:", " ".join(plagiarized_words))
+    # Calculate similarity percentage
+    with open(file1, 'r') as f1, open(file2, 'r') as f2:
+        words1 = set(f1.read().strip().split())
+        words2 = set(f2.read().strip().split())
+    if len(words1) == 0 and len(words2) == 0:
+        similarity = 0.0
     else:
-        print("No plagiarism detected.")
+        # Similarity: (number of matching words) / (average number of words in both files)
+        avg_len = (len(words1) + len(words2)) / 2
+        similarity = (len(plagiarized_words) / avg_len) * 100 if avg_len > 0 else 0.0
 
-    return set(plagiarized_words)
+    if plagiarized_words:
+        print(f"Plagiarism detected! Similarity score: {similarity:.2f}%")
+    else:
+        print(f"No plagiarism detected. Similarity score: {similarity:.2f}%")
+
+    return set(plagiarized_words), similarity
+
+def highlight_text(text1, text2, matches):
+    """Highlight matching phrases in the text."""
+    for match in list(matches):
+        highlight_text(text1, str(match))
+        highlight_text(text2, str(match))
 

@@ -21,6 +21,22 @@ from tkinter import messagebox
 stop_traversal = False
 
 def gui():
+    # Import Huffman tree visualization
+    from sample_algorithms import visualize_huffman_for_text
+
+    def show_huffman_tree1():
+        text1_content = text1.get("1.0", tk.END).strip()
+        if text1_content:
+            visualize_huffman_for_text(text1_content)
+        else:
+            messagebox.showinfo("Huffman Tree", "No text loaded in Document 1.")
+
+    def show_huffman_tree2():
+        text2_content = text2.get("1.0", tk.END).strip()
+        if text2_content:
+            visualize_huffman_for_text(text2_content)
+        else:
+            messagebox.showinfo("Huffman Tree", "No text loaded in Document 2.")
     #root setup
     root = tk.Tk()
     root.title("Text Document Input")
@@ -29,8 +45,8 @@ def gui():
     #Global Variables
     global Files, stop_traversal
     Files = []
-    totalSize = 0 #Running total of size of all files uploaded
-    decompressFilePath = None
+    # totalSize = 0 #Running total of size of all files uploaded
+    # decompressFilePath = None
 
     def open_file(entry_widget, text_widget):
         """ Open a file and display its contents in the text widget """
@@ -108,8 +124,8 @@ def gui():
         if not text1_content or not text2_content:
             return
 
-        # Call the imported function from text_matcher.py
-        matches = plagiarism_checker.check_plagiarism(text1_content, text2_content)
+        # Call the imported function from plagiarism_checker.py
+        matches, similarity = plagiarism_checker.check_plagiarism(text1_content, text2_content)
 
         # Highlight matches in both text boxes
         text1.configure(state='normal')
@@ -119,11 +135,19 @@ def gui():
         text2.tag_remove("match", "1.0", tk.END)
 
         for match in matches:
-            highlight_text(text1, match)
-            highlight_text(text2, match)
+            highlight_text(text1, str(match))
+            highlight_text(text2, str(match))
 
         text1.configure(state='disabled')
         text2.configure(state='disabled')
+
+        # Display similarity score in a message box
+        messagebox.showinfo("Similarity Score", f"Similarity score: {similarity:.2f}%")
+
+        # Display valid start vertices (matched words) in a message box
+        if matches:
+            valid_vertices = "\n".join([str(word) for word in matches])
+            messagebox.showinfo("Valid Start Vertices", f"Valid start vertices for BFS/DFS:\n\n{valid_vertices}")
 
     def find_and_highlight_terms():
         text1_content = entry1.get()
@@ -289,11 +313,15 @@ def gui():
 
         mergeSort(Files, key=attribute)  # Sort the global Files list
         print(f"Files sorted by {attribute}:")
+        sorted_list = "\n".join([f"{file['title']} (Author: {file['author']}, Date: {file['date']})" for file in Files])
         for file in Files:
             print(file)
 
-        # Show a confirmation popup
-        messagebox.showinfo("Sort Files", f"Files have been sorted by {attribute}.")
+        # Show a popup with the sorted file list
+        if sorted_list:
+            messagebox.showinfo("Sorted Files", f"Files sorted by {attribute}:\n\n{sorted_list}")
+        else:
+            messagebox.showinfo("Sorted Files", "No files to display.")
 
     #Everything below this point is to make the actual buttons and boxes and stuff
 
@@ -336,6 +364,8 @@ def gui():
     tk.Label(huffmanFrame1, text="Huffman Codes:").pack()
     huffman1 = scrolledtext.ScrolledText(huffmanFrame1, wrap = WORD, width=80, height = 5, font = ("Consolas", 8))
     huffman1.pack()
+    show_tree_btn1 = tk.Button(huffmanFrame1, text="Show Huffman Tree", command=show_huffman_tree1)
+    show_tree_btn1.pack(pady=2)
 
     #Second Document Selection
     topFrame2 = tk.Frame(rightFrame)
@@ -359,6 +389,8 @@ def gui():
     tk.Label(huffmanFrame2, text="Huffman Codes:").pack()
     huffman2 = scrolledtext.ScrolledText(huffmanFrame2, wrap = WORD, width=80, height = 5, font = ("Consolas", 8))
     huffman2.pack()
+    show_tree_btn2 = tk.Button(huffmanFrame2, text="Show Huffman Tree", command=show_huffman_tree2)
+    show_tree_btn2.pack(pady=2)
 
     #All the other stuff goes here
     topFrame3 = tk.Frame(left2)
@@ -440,4 +472,3 @@ def gui():
     # Run the application
     root.mainloop()
 
-#gui()

@@ -1,3 +1,36 @@
+# Huffman Tree Visualization
+import matplotlib.pyplot as plt
+
+def plot_huffman_tree(node, x=0, y=0, dx=1.5, depth=0, ax=None, parent=None):
+    """Recursively plot Huffman tree using matplotlib."""
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(22, 12))  # Increased figure size for wide trees
+        ax.axis('off')
+    if node is None:
+        return
+    label = f"{node.char if node.char else ''}\n{node.freq}"
+    ax.text(x, y, label, ha='center', va='center', bbox=dict(facecolor='skyblue', edgecolor='black', boxstyle='round,pad=0.3'))
+    if parent:
+        ax.plot([parent[0], x], [parent[1], y], 'k-')
+    # Increase horizontal spacing for lower levels
+    spacing = dx * (2.0 if depth < 2 else 3.0)  # Further increase horizontal spacing for lower levels
+    vertical_step = 1.5  # Increase vertical spacing between levels
+    if node.left:
+        plot_huffman_tree(node.left, x - spacing/(depth+1), y - vertical_step, dx, depth+1, ax, (x, y))
+    if node.right:
+        plot_huffman_tree(node.right, x + spacing/(depth+1), y - vertical_step, dx, depth+1, ax, (x, y))
+    if depth == 0:
+        plt.tight_layout()
+        plt.show()
+    if depth == 0:
+        plt.show()
+
+def visualize_huffman_for_text(text):
+    """Generate and plot Huffman tree for a given text."""
+    freq_map = {char: text.count(char) for char in set(text)}
+    root = build_huffman_tree(freq_map)
+    plot_huffman_tree(root)
+    
 ##### String Matching #####
 # Use Rabin-Karp and KMP algorithms to detect duplicate phrases or plagiarized content.
 # KMP algorithm
