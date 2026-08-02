@@ -134,8 +134,10 @@ def check_plagiarism(file1, file2):
     return set(plagiarized_words), similarity
 
 def highlight_text(text1, text2, matches):
-    """Highlight matching phrases in the text."""
-    for match in list(matches):
-        highlight_text(text1, str(match))
-        highlight_text(text2, str(match))
+    """Compatibility helper: return matches for UI layers to highlight.
+
+    The GUI modules perform highlighting themselves. This function returns
+    the list of matching phrases when called so callers can use the result.
+    """
+    return list(matches)
 

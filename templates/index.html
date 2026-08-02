@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document Scanner - Web UI</title>
+    <style>
+      :root { --accent: #2b6df6; --muted:#666; }
+      body { font-family: Inter, Arial, Helvetica, sans-serif; margin: 20px; color:#222; }
+      h2 { color:var(--accent); }
+      .columns { display:flex; gap:16px; margin-top:12px; }
+      .pane { flex:1; border:1px solid #e6e6e6; background:#fff; padding:10px; border-radius:6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+      .controls { margin-top:8px; display:flex; gap:8px; align-items:center; }
+      input[type="file"] { display:inline-block; }
+      .btn { background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
+      .btn.secondary { background:#eee; color:#333; }
+      .file-meta { font-size:0.9em; color:var(--muted); }
+      mark { background: #ffeb3b; padding:0 2px; }
+      pre { white-space:pre-wrap; font-family:Consolas, monospace; }
+      .huffman { margin-top:12px; font-size:0.9em; }
+    </style>
+  </head>
+  <body>
+    <h2>Document Scanner (Web)</h2>
+    <form method="post" enctype="multipart/form-data">
+      <div>
+        <label>Document 1: <input type="file" name="file1" accept=".txt"></label>
+        <label style="margin-left:12px">Document 2: <input type="file" name="file2" accept=".txt"></label>
+      </div>
+      <div class="controls">
+        <label>Search term: <input type="text" name="term"></label>
+        <button type="submit" class="btn">Process</button>
+      </div>
+    </form>
+
+    {% if result %}
+      <h3>Results</h3>
+      <p>Similarity: {{ result.similarity|round(2) }}%</p>
+      <div class="columns">
+        <div class="pane">
+          <h4>Document 1</h4>
+          <div style="border:1px solid #ddd; padding:8px; background:#fafafa; height:400px; overflow:auto; white-space:pre-wrap; font-family:Consolas, monospace">{{ result.display1|safe }}</div>
+        </div>
+        <div class="pane">
+          <h4>Document 2</h4>
+          <div style="border:1px solid #ddd; padding:8px; background:#fafafa; height:400px; overflow:auto; white-space:pre-wrap; font-family:Consolas, monospace">{{ result.display2|safe }}</div>
+        </div>
+      </div>
+
+      <div class="huffman">
+        <h4>Huffman Codes (sample)</h4>
+        {% if result.huffman %}
+          <pre>{{ result.huffman.codes }}</pre>
+          <p>Original bytes: {{ result.huffman.orig }} — Compressed (approx): {{ result.huffman.comp }}</p>
+          {% if result.file1 %}
+            <a class="btn" href="/download_huffman?f={{ result.file1 }}">Download Huffman (Doc1)</a>
+            <button class="btn secondary" onclick="copyText(document.querySelector('.huffman pre').innerText)">Copy Huffman</button>
+            <button class="btn secondary" id="view-huffman-btn">View Huffman Image</button>
+            <div id="huffman-image-container" style="margin-top:8px; display:none;">
+              <img id="huffman-image" src="/huffman_image?f={{ result.file1 }}" alt="Huffman Tree" style="max-width:100%; border:1px solid #ddd; border-radius:6px;" />
+            </div>
+          {% endif %}
+        {% else %}
+          <p>No text to generate Huffman codes.</p>
+        {% endif %}
+        {% if result.file1 and result.file2 %}
+          <div style="margin-top:8px">
+            <a class="btn" href="/download_matches?f1={{ result.file1 }}&f2={{ result.file2 }}">Download Matches</a>
+            <button class="btn secondary" onclick="copyText(document.querySelectorAll('.pane div')[0].innerText)">Copy Document 1</button>
+            <a class="btn secondary" href="/export_json?f1={{ result.file1 }}&f2={{ result.file2 }}">Export JSON</a>
+          </div>
+        {% endif %}
+      </div>
+
+    <script>
+      // Show file previews when files are selected
+      function previewFile(inputEl, outSelector) {
+        const file = inputEl.files[0];
+        const out = document.querySelector(outSelector);
+        if (!file) { out.innerText = ''; return; }
+        const reader = new FileReader();
+        reader.onload = e => { out.innerText = e.target.result; };
+        reader.readAsText(file);
+      }
+
+      document.querySelector('input[name=file1]').addEventListener('change', function(){ previewFile(this, '#preview1'); });
+      document.querySelector('input[name=file2]').addEventListener('change', function(){ previewFile(this, '#preview2'); });
+
+      // View Huffman image inline
+      document.getElementById('view-huffman-btn')?.addEventListener('click', function(){
+        const container = document.getElementById('huffman-image-container');
+        if (container.style.display === 'none') container.style.display = 'block'; else container.style.display = 'none';
+      });
+
+      // Show spinner during form submit
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function(){
+        document.querySelectorAll('.btn').forEach(b=>b.disabled=true);
+        const spinner = document.createElement('span');
+        spinner.id = 'spinner';
+        spinner.innerText = ' Processing...';
+        document.body.appendChild(spinner);
+      });
+
+      function copyText(text) {
+        if (!navigator.clipboard) { alert('Clipboard API not available'); return; }
+        navigator.clipboard.writeText(text).then(()=>{
+          alert('Copied to clipboard');
+        }).catch(e=>{ alert('Copy failed: '+e); });
+      }
+    </script>
+
+    <div style="margin-top:12px; display:flex; gap:12px;">
+      <div style="flex:1">
+        <h4>Preview Document 1</h4>
+        <div id="preview1" class="pane" style="height:160px; overflow:auto; white-space:pre-wrap; font-family:Consolas, monospace"></div>
+      </div>
+      <div style="flex:1">
+        <h4>Preview Document 2</h4>
+        <div id="preview2" class="pane" style="height:160px; overflow:auto; white-space:pre-wrap; font-family:Consolas, monospace"></div>
+      </div>
+    </div>
+    {% endif %}
+  </body>
+</html>

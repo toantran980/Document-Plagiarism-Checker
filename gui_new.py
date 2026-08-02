@@ -1,7 +1,15 @@
-from tkinter import *
-from tkinter import filedialog
-from tkinter import scrolledtext
-import tkinter as tk
+try:
+    import tkinter as tk
+    from tkinter import filedialog, scrolledtext, messagebox, TOP, LEFT, RIGHT, BOTH, WORD
+    TK_AVAILABLE = True
+except Exception:
+    # tkinter is optional when using the Qt UI. Guard imports so module still loads.
+    tk = None
+    filedialog = None
+    scrolledtext = None
+    messagebox = None
+    TOP = LEFT = RIGHT = BOTH = WORD = None
+    TK_AVAILABLE = False
 from datetime import datetime
 import re
 import string
@@ -15,7 +23,7 @@ from sample_algorithms import generate_huffman_codes
 from graph import build_word_graph, bfs, dfs, visualize_word_graph_with_traversal, count_word_occurrences
 import os
 
-from tkinter import messagebox
+# messagebox already imported above when tkinter is available
 
 # Global flag for stopping traversal
 stop_traversal = False

@@ -20,7 +20,7 @@ def plot_huffman_tree(node, x=0, y=0, dx=1.5, depth=0, ax=None, parent=None):
     if node.right:
         plot_huffman_tree(node.right, x + spacing/(depth+1), y - vertical_step, dx, depth+1, ax, (x, y))
     if depth == 0:
-        plt.tight_layout()
+        plt.subplots_adjust(left=0.01, right=0.99, top=0.99, bottom=0.01)
         plt.show()
     if depth == 0:
         plt.show()

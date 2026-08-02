@@ -1,7 +1,14 @@
-from tkinter import *
-from tkinter import filedialog
-from tkinter import scrolledtext
-import tkinter as tk
+try:
+    import tkinter as tk
+    from tkinter import filedialog, scrolledtext, TOP, LEFT, RIGHT, BOTH
+    TK_AVAILABLE = True
+except Exception:
+    # tkinter is optional when using the Qt UI. Guard imports so module still loads.
+    tk = None
+    filedialog = None
+    scrolledtext = None
+    TOP = LEFT = RIGHT = BOTH = None
+    TK_AVAILABLE = False
 from datetime import datetime
 import string
 import plagiarism_checker
